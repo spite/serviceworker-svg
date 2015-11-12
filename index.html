@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Service Workers and SVG loading</title>
+
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+      *{ box-sizing: border-box; margin: 0; padding: 0;}
+      body{ overflow: hidden; font-family: Lato, sans-serif; width: 100%; height: 100% ; padding: 20px;}
+      iframe{ width: 24px; height: 24px; border: none;}
+      h1{ margin-bottom: 1em;}
+      p{ margin-bottom: 1em; line-height: 1.4em;}
+      #images p{ line-height: 1em;}
+      #images p > *{ transform: translateY(5px); width: 24px; height: 24px;}
+      #images h2{ margin-top: 1em; margin-bottom: 1em;}
+      #images{ margin-bottom: 4em;}
+  </style>
+  <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+    <h1>Optimising SVG load with Service Workers</h1>
+
+    <p>This demo goes with the article "<a href="https://clicktorelease.com/blog/optimise-svg-load-service-worker" >Optimising SVG load with Service Worker</a>".</p>
+    <p>If it works, you should see green dots on all images but the heart one.<br/>Supported browser: latest Chrome, Firefox and Opera.</p>
+    <p>The first time the site runs, it will install the Service Worker, so it won't be ready right away: none of the images will have a green dot.<br/>The next reload, the SW should be installed and running, and the images should have the green dot.
+
+    <div id="images">
+        <h2>HTML</h2>
+        <p>This is an &ltimg&gt tag, and the src is in the master: <img src="assets/svg/sign-error.svg" /></p>
+        <p>This is an &ltimg&gt tag, and the src is <b>not</b> in the master: <img src="assets/svg/heart.svg" /></p>
+        <p>This is an &ltiframe&gt, and the src is in the master: <iframe src="assets/svg/turntable.svg" ></iframe></p>
+        <h2>JavaScript</h2>
+    </div>
+
+    <p>The SVG images processed by the Service Worker show a green dot on the top left corner.</p>
+    <p>Icons from <a href="https://www.iconfinder.com/iconsets/small-n-flat">small-n-flat set</a>.</p>
+
+</body>
+
+<script>
+
+    var sw_registration;
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+            sw_registration = registration;
+            console.log('Service Worker registration successful with scope: ', registration.scope);
+        }).catch(function(err) {
+            console.log('Service Worker registration failed: ', err);
+        });
+    }
+
+    function unregister() {
+
+    if ('serviceWorker' in navigator) {
+
+        sw_registration.unregister().then(function(boolean) {
+            console.log('Service Worker unregistration successful' );
+            });
+        }
+
+    }
+
+</script>
+
+
+<script>
+
+    var container = document.getElementById( 'images' );
+
+    function addImage() {
+
+       var p = document.createElement( 'p' );
+       p.textContent = 'This is an Image object, the src is in the master: ';
+
+       var img  = new Image(); 
+       img.src = 'assets/svg/sign-check.svg';
+
+       p.appendChild( img );
+       container.appendChild( p );
+   }
+
+   function addObject() {
+
+       var p = document.createElement( 'p' );
+       p.textContent = 'This is an Object object, the src is in the master: ';
+
+       var object = document.createElement( 'object' );
+       object.data = 'assets/svg/star.svg';
+       object.type = 'image/svg+xml';
+
+       p.appendChild( object );
+       container.appendChild( p );
+
+   }
+
+   function addFromXHR() {
+
+       var xhr = new XMLHttpRequest();
+       xhr.open( 'get', 'assets/svg/bubbles.svg', true);
+
+       xhr.addEventListener( 'load', function() {
+
+           var p = document.createElement( 'p' );
+           p.textContent = 'This is an SVG loaded as text with xHR, the src is in the master: ';
+
+           var span = document.createElement( 'span' );
+           span.innerHTML = this.responseText;
+
+           p.appendChild( span );
+           container.appendChild( p );
+
+       } );
+
+       xhr.send();
+
+
+   }
+
+   addImage();
+   addObject();
+   addFromXHR();
+
+</script>
+
+</html>
