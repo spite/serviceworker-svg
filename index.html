@@ -15,6 +15,10 @@
       #images p > *{ transform: translateY(5px); width: 24px; height: 24px;}
       #images h2{ margin-top: 1em; margin-bottom: 1em;}
       #images{ margin-bottom: 4em;}
+      #status{ padding: 20px;}
+      .success{ border: 1px solid #5ee48d; background-color: #b9f1cd;}
+      .warning{ border: 1px solid #f2c500; background-color: #f7e180;}
+      .error{ border: 1px solid #d63838; background-color: #ffbcbc;}
   </style>
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 </head>
@@ -26,6 +30,8 @@
     <p>This demo goes with the article "<a href="https://clicktorelease.com/blog/optimise-svg-load-service-worker" >Optimising SVG load with Service Worker</a>".</p>
     <p>If it works, you should see green dots on all images but the heart one.<br/>Supported browser: latest Chrome (Desktop and Android), Firefox (only got it to work on Developer Edition) and Opera.</p>
     <p>The first time the site runs, it will install the Service Worker, so it won't be ready right away: none of the images will have a green dot.<br/>The next reload, the SW should be installed and running, and the images should have the green dot.
+
+    <p id="status" ></p>
 
     <div id="images">
         <h2>HTML</h2>
@@ -42,15 +48,24 @@
 
 <script>
 
+    var statusDiv = document.querySelector( '#status' );
+
     var sw_registration;
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('service-worker.js').then(function(registration) {
             sw_registration = registration;
             console.log('Service Worker registration successful with scope: ', registration.scope);
+            statusDiv.textContent = 'Service Worker available and registered!';
+            statusDiv.className = 'success';
         }).catch(function(err) {
             console.log('Service Worker registration failed: ', err);
+            statusDiv.textContent = 'Service Worker available but couldn\'t register';
+            statusDiv.className = 'warning';
         });
+    } else {
+        statusDiv.textContent = 'Service Worker not availabe';
+        statusDiv.className = 'error';
     }
 
     function unregister() {
