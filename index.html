@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <style>
       *{ box-sizing: border-box; margin: 0; padding: 0;}
-      body{ overflow: hidden; font-family: Lato, sans-serif; width: 100%; height: 100% ; padding: 20px;}
+      body{ font-family: Lato, sans-serif; width: 100%; height: 100% ; padding: 20px;}
       iframe{ width: 24px; height: 24px; border: none;}
       h1{ margin-bottom: 1em;}
       p{ margin-bottom: 1em; line-height: 1.4em;}
@@ -24,7 +24,7 @@
     <h1>Optimising SVG load with Service Workers</h1>
 
     <p>This demo goes with the article "<a href="https://clicktorelease.com/blog/optimise-svg-load-service-worker" >Optimising SVG load with Service Worker</a>".</p>
-    <p>If it works, you should see green dots on all images but the heart one.<br/>Supported browser: latest Chrome, Firefox and Opera.</p>
+    <p>If it works, you should see green dots on all images but the heart one.<br/>Supported browser: latest Chrome (Desktop and Android), Firefox (only got it to work on Developer Edition) and Opera.</p>
     <p>The first time the site runs, it will install the Service Worker, so it won't be ready right away: none of the images will have a green dot.<br/>The next reload, the SW should be installed and running, and the images should have the green dot.
 
     <div id="images">
